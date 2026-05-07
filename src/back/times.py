@@ -61,4 +61,5 @@ class TimeCheker():
          times = data[1:]
          target = datetime.now().strftime("%Y-%m-%d")
          return_data = [row for row in times if row[0] == target]
+         print(return_data)
          return return_data

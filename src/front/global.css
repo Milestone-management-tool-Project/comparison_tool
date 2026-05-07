@@ -203,7 +203,19 @@ body{
 .csv-area{
     display: flex;
     width: 100%;
+    min-height: 0;
+    text-align: start;
+    border: 1px solid var(--border-color);
+    border-color: var(--border-color);
+    overflow-y: auto;
+    height: 100%;
 }
+.csv-table{
+    max-height: 1px;
+    height: fit-content;
+    margin-bottom: auto;
+}
+
 .left-area{
     display: flex;
     flex: 1;
