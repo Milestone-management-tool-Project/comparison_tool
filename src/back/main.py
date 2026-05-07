@@ -28,8 +28,8 @@ def today_timer():
     return result
 
 @app.post("/goals/save")
-def goals_set(goal:Annotated[list[str], fastapi.Form()], month):
-    result = goals.Goals(goal, status=None, limit=None,month=month).save()
+def goals_set(goal:Annotated[list[str], fastapi.Form()], limit, month):
+    result = goals.Goals(goal, status=None, limit=limit,month=month).save()
     return result
 
 @app.post("/goals/update")
