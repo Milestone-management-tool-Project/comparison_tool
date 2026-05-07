@@ -69,7 +69,7 @@ export class Timer{
 
     private async _click_button(){
         const start_data = (await api.timer.timerStartTimerStartGet()).data
-        this.button_log.append(start_data)
+        this.button_log.append(start_data + '\n')
     }
 
 
