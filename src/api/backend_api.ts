@@ -324,6 +324,21 @@ export class Api<
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @name TodayTimerTimerTodayGet
+     * @summary Today Timer
+     * @request GET:/timer/today
+     */
+    todayTimerTimerTodayGet: (params: RequestParams = {}) =>
+      this.request<any, any>({
+        path: `/timer/today`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
   };
   goals = {
     /**
@@ -378,23 +393,50 @@ export class Api<
         format: "json",
         ...params,
       }),
-
+  };
+  data = {
     /**
      * No description
      *
-     * @name GetGoalsGoalsDataGet
-     * @summary Get Goals
-     * @request GET:/goals/data
+     * @name GetToJsonlDataJsonGet
+     * @summary Get To Jsonl
+     * @request GET:/data/json
      */
-    getGoalsGoalsDataGet: (
+    getToJsonlDataJsonGet: (
       query: {
         /** Month */
         month: any;
+        /** Year */
+        year: any;
       },
       params: RequestParams = {},
     ) =>
       this.request<any, HTTPValidationError>({
-        path: `/goals/data`,
+        path: `/data/json`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name GetToCsvDataCsvGet
+     * @summary Get To Csv
+     * @request GET:/data/csv
+     */
+    getToCsvDataCsvGet: (
+      query: {
+        /** Month */
+        month: any;
+        /** Year */
+        year: any;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<any, HTTPValidationError>({
+        path: `/data/csv`,
         method: "GET",
         query: query,
         format: "json",

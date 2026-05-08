@@ -1,6 +1,8 @@
 import csv
 from datetime import datetime
 import os
+from .file_operations import create_path
+from .file_operations import FileSearch
 class TimeCheker():
     def __init__(self):
             self.flag = False
@@ -8,16 +10,17 @@ class TimeCheker():
     def start_checker(self):
         
         if self.flag is True:
-            return "終了ボタンが押されていません"
+            return "not end"
         else:
             start_time = datetime.now()
             self.start = start_time
             self.flag = True
-            return start_time
+            return_time = datetime.now().strftime('%H:%M:%S')
+            return 'start time is: ' + return_time
 
     def end_checker(self):
             if self.flag is False:
-                 return "開始ボタンが押されていません"
+                 return "not start"
             else:
                 self.endtime = datetime.now()
                 self.total = self.endtime - self.start 
@@ -28,15 +31,12 @@ class TimeCheker():
     def save_to_csv(self):
         year_month = datetime.now().strftime("%Y-%m")
         path = f"csv/time_{year_month}.csv"
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath( __file__))))
         
-        full_path = os.path.join(base_dir, path)
+        full_path = create_path(path)
+        if not os.path.exists(create_path('csv/')):
+             os.mkdir(create_path('csv/'))
         file = os.path.isfile(full_path)
-        csv_dir = os.path.isdir(os.path.join(base_dir, "csv"))
 
-        if not csv_dir:
-             os.mkdir(os.path.join(base_dir,"csv"))
-             
         try:
             with open(full_path, 'a', encoding="utf-8") as f:
                 writer = csv.writer(f)
@@ -51,6 +51,15 @@ class TimeCheker():
                 writer.writerow(data)
             
             return str(self.total).split(".")[0]
-        except:
-             print("エラー発生")
-             return "csv保存に問題発生"
+        except Exception as e:
+             return f"Problems occurred with saving the CSV file.{e}"
+    
+    def import_to_csv(self):
+         year = datetime.now().strftime('%Y')
+         month = datetime.now().strftime('%m')
+         data = FileSearch(year=year, month=month).reard_to_csv()
+         times = data[1:]
+         target = datetime.now().strftime("%Y-%m-%d")
+         return_data = [row for row in times if row[0] == target]
+         print(return_data)
+         return return_data

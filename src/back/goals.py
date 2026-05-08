@@ -1,14 +1,12 @@
 from datetime import datetime
 import os, json
-from dotenv import load_dotenv
-load_dotenv()
+from .file_operations import create_path
 
 class Goals():
     def __init__(self, goal=None, key=None, status=None, limit=None, month=None):
          self.year = datetime.now().strftime("%Y")
          self.month = datetime.now().strftime("%m")
-         self.json_file = f"{self.year}_{month}_goals.jsonl"
-         self.json_path = os.environ.get("STUDY_JSON_DIR")
+         self.json_file = create_path(f"json/{self.year}_{month}_goals.jsonl")
          self.goal = goal
          self.key = key
          self.goals = {}
@@ -52,12 +50,10 @@ class Goals():
             self.goals = {'key': recode_id,'created_at': i[0],"limit": self.limit, 
                     'task': i[1], "status": -1, "updated_at": None}
             
-            if self.json_path is None:
-                print("環境変数が機能していません")
-            else:
-                full_path = os.path.join(self.json_path, self.json_file)
-                
-            with open(full_path, 'a', encoding='utf-8') as f:
+            if not os.path.exists(create_path('json/')):
+                os.mkdir(create_path('json/'))
+            
+            with open(self.json_file, 'a', encoding='utf-8') as f:
                 data = json.dumps(self.goals, ensure_ascii=False)
                 f.write(data + "\n")
 
@@ -80,13 +76,10 @@ class Goals():
             return "ステータス更新時に不正な値が送られました"
         
         # update
-        if self.json_path is None:
-            print("環境変数が機能していません")
-            return "環境変数が機能していません"
-        else:
-            full_path = os.path.join(self.json_path, self.json_file)
-
-        with open(full_path, 'r', encoding='utf-8') as f:
+        if not os.path.exists(self.json_file):
+            return "ファイルが作成されていません。タスクを登録してから実行してください。"
+        
+        with open(self.json_file, 'r', encoding='utf-8') as f:
             for data in f.readlines():
                 try:
                     file_data = json.loads(data)
@@ -124,7 +117,7 @@ class Goals():
                     i['updated_at'] = serch_date
 
         entry_data = []
-        with open(full_path, 'r', encoding='utf-8')as f:
+        with open(self.json_file, 'r', encoding='utf-8')as f:
             for data in f.readlines():
                 try:
                     datas = json.loads(data)
@@ -132,7 +125,7 @@ class Goals():
                 except:
                     continue
         
-        with open(full_path, 'w') as f:
+        with open(self.json_file, 'w') as f:
             for row in entry_data:
                 if row['key'] == serch_task['key']:
                     row = serch_task
@@ -140,20 +133,3 @@ class Goals():
                     row['updated_at'] = self.json_date
                 new_data = json.dumps(row, ensure_ascii=False)
                 f.write(new_data + '\n')
-        
-    def leard_to_jsonl(self):
-        return_data = []
-        if self.json_path is None:
-            print("環境変数が機能していません")
-            return
-        else:
-            full_path = os.path.join(self.json_path, self.json_file)
-        with open(full_path, 'r', encoding='utf-8') as f:
-            for data in f.readlines():
-                try:
-                    file_data = json.loads(data)
-                    return_data.append(file_data)
-                except:
-                    return "jsonファイルが見つかりません"
-        print(return_data)
-        return return_data

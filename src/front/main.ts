@@ -1,6 +1,7 @@
 import './global.css';
 import {Footer, GraphArea, Header, MainArea, Sidebar} from './components/components.ts';
 import { Timer } from './components/timer.ts';
+import { Goals } from './components/goals.ts';
 function App(){
     const root = document.querySelector<HTMLDivElement>('#app-container');
     const header = new Header('機能名');
@@ -12,9 +13,10 @@ function App(){
     const footer = new Footer('フッター')
     footer.render()
     const timer = new Timer()
-    const mainArea = new MainArea(timer.timer, timer.start_timer)
+    const goal = new Goals()
+    const mainArea = new MainArea(goal.goals)
     mainArea.render()
-    timer.render()
+    goal.render()
     if(!root) return;
 }
 App();

@@ -92,18 +92,15 @@ export class Footer{
 export class MainArea{
     mainArea: HTMLElement
     functions: HTMLElement
-    actions: HTMLButtonElement
-    constructor(functions: HTMLElement, actions: HTMLButtonElement){
+    constructor(functions: HTMLElement){
         this.mainArea = document.createElement('div');
         this.mainArea.classList.add('.main-area');
         this.functions = functions
-        this.actions = actions
     }
     render(){
         const container = document.querySelector('.main-area');
         container?.append(this.mainArea);
         container?.append(this.functions);
-        container?.append(this.actions);
     }
 }
 
