@@ -3,60 +3,43 @@ import os, json
 from .file_operations import create_path
 
 class Goals():
-    def __init__(self, goal=None, key=None, status=None, limit=None, month=None):
+    def __init__(self, goal=None, status=None, limit=None):
          self.year = datetime.now().strftime("%Y")
          self.month = datetime.now().strftime("%m")
-         self.json_file = create_path(f"json/{self.year}_{month}_goals.jsonl")
+         self.json_file = create_path(f"json/{self.year}_{self.month}_goals.jsonl")
          self.goal = goal
-         self.key = key
          self.goals = {}
          self.status = status
          self.json_date = None
          self.limit = limit
+         self.key = None
 
-    def save(self):
+    def create_project(self):
         import uuid
-        entry = []
         self.json_date = datetime.now().strftime("%Y-%m-%d")
-        goal = ",".join(self.goal).split(",")
+        recode_id = str(uuid.uuid4())
+        if self.goal == " ":
+            return "プロジェクト名が登録されていません。プロジェクト名を設定してください。"
         
-        if len(goal) > 0:
-            self.entry1 = (self.json_date, goal[0])
-            entry.append(self.entry1)
-        else:
-            self.entry1 = None
-        if len(goal) > 1:
-            self.entry2 = (self.json_date, goal[1])
-            entry.append(self.entry2)
-        else:
-            self.entry2 = None
-
-        if len(goal) > 2:
-            self.entry3 = (self.json_date, goal[2])
-            entry.append(self.entry3)
-        else:
-            self.entry3 = None
-        if len(goal) > 3:
-            self.entry4 = (self.json_date, goal[3])
-            entry.append(self.entry4)
-        else:
-            self.entry4 = None
+        self.goals = {
+            "ticket_id": recode_id ,"title": self.goal ,"created_at": self.json_date, 
+            "description": {
+                "overview":"プロジェクト概要",
+                "detail": "プロジェクト詳細情報"
+                },
+                "limit": self.limit,
+                "work_domain": []
+                }
         
-        for i in entry:
-            recode_id = str(uuid.uuid4())
-            if i == "":
-                continue
-        
-            self.goals = {'key': recode_id,'created_at': i[0],"limit": self.limit, 
-                    'task': i[1], "status": -1, "updated_at": None}
-            
-            if not os.path.exists(create_path('json/')):
-                os.mkdir(create_path('json/'))
-            
+        if not os.path.exists(create_path('json/')):
+            os.mkdir(create_path('json/'))
+        try:
             with open(self.json_file, 'a', encoding='utf-8') as f:
                 data = json.dumps(self.goals, ensure_ascii=False)
                 f.write(data + "\n")
-
+        except Exception as e:
+            return f"プロジェクト登録時にエラーが発生-> {e}"
+    
     def update(self):
         serch_task = None
         serch_date = None

@@ -27,9 +27,9 @@ def today_timer():
     result = timer.import_to_csv()
     return result
 
-@app.post("/goals/save")
-def goals_set(goal:Annotated[list[str], fastapi.Form()], limit, month):
-    result = goals.Goals(goal, status=None, limit=limit,month=month).save()
+@app.post("/goals/create_project")
+def goals_set(ticket, limit):
+    result = goals.Goals(goal=ticket, status=None, limit=limit).create_project()
     return result
 
 @app.post("/goals/update")
