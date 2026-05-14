@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "api-gen" :"npx swagger-typescript-api generate --path http://localhost:8082/openapi.json --output ./src/api --name backend_api.ts"},
+    "api-gen" :"npx swagger-typescript-api generate --path http://localhost:8082/openapi.json --output ./src/api --name backend_api.ts",
     "build": "vite build src/front",
     "start": "electron src/front/dist/index.html"
+  }
 }
