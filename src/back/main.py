@@ -28,18 +28,18 @@ def today_timer():
     return result
 
 @app.post("/goals/create_project")
-def goals_set(ticket, limit, description: Annotated[list[str], fastapi.Form()]):
-    result = goals.Goals(goal=ticket, limit=limit, description=description).create_project()
+def goals_set(ticket, limit, overview, datail):
+    result = goals.Goals(goal=ticket, limit=limit, overview=overview, datail=datail).create_project()
     return result
 
 @app.post("/goals/create_child_ticket")
-def create_child_ticket(project_key, status, limit, overview, description:Annotated[list[str], fastapi.Form()]):
-    result = goals.Goals(key=project_key, status=status, limit=limit,overview=overview ,description=description).create_child_ticket()
+def create_child_ticket(project_key, status, limit, overview, purpose, work_domain):
+    result = goals.Goals(key=project_key, status=status, limit=limit,overview=overview , purpose=purpose, work_domain=work_domain).create_child_ticket()
     return result
 
 @app.post("/goals/create_grandchild_ticket")
-def create_grandchild_ticket(project_key, status, limit, domain_key, description:Annotated[list[str], fastapi.Form()]):
-    result = goals.Goals(key=project_key, domain_key=domain_key ,status=status, limit=limit, description=description).create_grandchild_ticket()
+def create_grandchild_ticket(project_key, status, limit, domain_key, task):
+    result = goals.Goals(key=project_key, domain_key=domain_key ,status=status, limit=limit, task=task).create_grandchild_ticket()
     return result
 
 @app.get('/data/json')

@@ -4,7 +4,9 @@ from .file_operations import create_path
 import uuid
 
 class Goals():
-    def __init__(self, goal=None, key=None, domain_key=None,status=None, limit=None, description=None, overview=None):
+    def __init__(
+            self, goal=None, key=None, domain_key=None,status=None, limit=None, overview=None, datail=None,
+            purpose=None, work_domain=None, task=None):
          self.year = datetime.now().strftime("%Y")
          self.month = datetime.now().strftime("%m")
          self.json_file = create_path(f"json/{self.year}_{self.month}_goals.jsonl")
@@ -14,11 +16,13 @@ class Goals():
          self.json_date = None
          self.limit = limit
          self.key = key
-         purpose, work_domain  = description[0].split(",")
-         self.description = [{"purpose": purpose,"work_domain": work_domain}]
+         self.label = [{"purpose": purpose,"work_domain": work_domain}]
          self.domain_key = domain_key
          self.overview = overview
+         self.datail = datail
+         self.task = task
 
+         print(self.datail, self.overview)
     def create_project(self):
         self.json_date = datetime.now().strftime("%Y-%m-%d")
         recode_id = str(uuid.uuid4())
@@ -27,7 +31,7 @@ class Goals():
         
         self.goals = {
             "ticket_id": recode_id ,"title": self.goal ,"created_at": self.json_date, 
-            "description": self.description,
+            "description": [{"overview": self.overview,"datail": self.datail}],
                 "limit": self.limit,
                 "work_domain": []
                 }
@@ -52,7 +56,7 @@ class Goals():
                 if i['ticket_id'] == self.key:
                     i['work_domain'].append({
                         "domain_id": str(id),
-                        "label": self.description,
+                        "label": self.label,
                         "overview": self.overview,
                         "created_at": times,
                         "states": 0, 
@@ -80,11 +84,11 @@ class Goals():
                     if j['domain_id'] == self.domain_key:
                         j['task'].append({
                                 "task_id": str(id),
-                                "title": "タスク名",
+                                "title": self.task,
                                 "created_at": times,
-                                "limit": '2026-05-11',
-                                "states": 0,
-                                "completion_flag": True,
+                                "limit": self.limit,
+                                "states": self.status,
+                                "completion_flag": False,
                                 "updated_at": times
                             })
                     else: continue
