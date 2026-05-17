@@ -6,7 +6,7 @@ import uuid
 class Goals():
     def __init__(
             self, goal=None, key=None, domain_key=None,status=0, limit=None, overview=None, datail=None,
-            purpose=None, work_domain=None, task=None):
+            purpose=None, work_domain=None, task_id=None, task_name=None):
          self.year = datetime.now().strftime("%Y")
          self.month = datetime.now().strftime("%m")
          self.json_file = create_path(f"json/{self.year}_{self.month}_goals.jsonl")
@@ -20,8 +20,9 @@ class Goals():
          self.domain_key = domain_key
          self.overview = overview
          self.datail = datail
-         self.task = task
+         self.task_id = task_id
          self.flag = False
+         self.task_name = task_name
 
     def create_project(self):
         recode_id = str(uuid.uuid4())
@@ -81,8 +82,13 @@ class Goals():
     def create_grandchild_ticket(self):
         id = uuid.uuid4()
         times = datetime.now().strftime('%H:%M:%S')
-        if self.task == " ":
+        if self.task_id == " ":
             return "タスクが登録されていません。"
+        if isinstance(self.status, str):
+            return f"statusで文字列が渡されています。-> {self.status}"
+        if self.status >= 1 or self.status <= -2:
+            return f"statusに不正な値が格納されています。-> {self.status}"
+        
         with open(self.json_file, 'r', encoding='utf-8') as f:
             datas = [json.loads(line) for line in f.readlines()]
         for i in datas:
@@ -91,7 +97,7 @@ class Goals():
                     if j['domain_id'] == self.domain_key:
                         j['task'].append({
                                 "task_id": str(id),
-                                "title": self.task,
+                                "title": self.task_name,
                                 "created_at": times,
                                 "limit": self.limit,
                                 "status": self.status,
@@ -102,12 +108,52 @@ class Goals():
             for i in datas: 
                 f.write(json.dumps(i, ensure_ascii=False) + '\n')
         return datas[0]
+        
+    def update_status(self):
+        time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
+        try:
+            with open(self.json_file, 'r', encoding='utf-8') as f:
+                datas = [json.loads(line) for line in f.readlines()]
+            for d in datas:
+                for i in d['work_domain']:
+                    if i['domain_id'] == self.domain_key:
+                        for j in i['task']:
+                            print(j)
+                            if self.task_id == j['task_id']:
+                                if isinstance(j['status'], str):
+                                    return f"statusに文字列が格納されています。-> {j['status']}"
+                                if j['status'] >= 1 or j['status'] <= -2:
+                                    return f"statusに不正な値が格納されています。-> {j['status']}"
+                                if j['status'] <= 0:
+                                    j['status'] = self.status
+                                else:
+                                    continue
+                                if not self.limit is None:
+                                    j['limit'] = self.limit
+                                else:
+                                    continue
+                                j['updated_at'] = time
+            with open(self.json_file, 'w', encoding='utf-8') as f :
+                for i in datas: 
+                    f.write(json.dumps(i, ensure_ascii=False) + '\n')
+            return datas[0]
+        
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return f"データの更新時にエラー発生-> {e}"
 
-    def changed_flag(self):
-        self.json_date = datetime.now().strftime('%H:%M:%S')
-        if self.status == 0 or -1:
-            self.flag = False
-            return self.flag
-        if self.status == 1:
-            self.flag = True
-            return self.flag
+   # def test_changed_flag(self):
+        flag_data = []
+        for i in data['work_domain']:
+            flag_data = [j['status'] == 1 for j in i['task']]
+        result = all(flag_data)
+        if result:
+            data["work_domain"][0]['completion_flag'] = True
+        else:
+            data["work_domain"][0]['completion_flag'] = False
+        print(data['work_domain'][0]['task'][0])
+        print(data['work_domain'][0]['task'][1])
+        print(data["work_domain"][0]['completion_flag'])
+
+
