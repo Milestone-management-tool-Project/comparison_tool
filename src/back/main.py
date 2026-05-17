@@ -38,8 +38,13 @@ def create_child_ticket(project_key, limit, overview, purpose, work_domain):
     return result
 
 @app.post("/goals/create_grandchild_ticket")
-def create_grandchild_ticket(project_key, status, limit, domain_key, task):
-    result = goals.Goals(key=project_key, domain_key=domain_key ,status=status, limit=limit, task=task).create_grandchild_ticket()
+def create_grandchild_ticket(project_key, status:int, limit, domain_key, task_name):
+    result = goals.Goals(key=project_key, domain_key=domain_key ,status=status, limit=limit, task_name=task_name).create_grandchild_ticket()
+    return result
+
+@app.post("/goals/update_grandchild_ticket")
+def create_grandchild_ticket(project_key, status:int, limit, domain_key, task_id):
+    result = goals.Goals(key=project_key, domain_key=domain_key ,status=status, limit=limit, task_id=task_id).update_status()
     return result
 
 @app.get('/data/json')
