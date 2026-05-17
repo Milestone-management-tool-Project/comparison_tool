@@ -2,6 +2,7 @@ from datetime import datetime
 import os, json
 from .file_operations import create_path
 import uuid
+import traceback
 
 class Goals():
     def __init__(
@@ -66,7 +67,7 @@ class Goals():
                         "label": self.label,
                         "overview": self.overview,
                         "created_at": times,
-                        "status": self.status, 
+                        "status": self.status,
                         "limit": self.limit,
                         "completion_flag": self.flag,
                         "task":[]
@@ -114,15 +115,17 @@ class Goals():
         try:
             with open(self.json_file, 'r', encoding='utf-8') as f:
                 datas = [json.loads(line) for line in f.readlines()]
+            update_ticket(datas)
             for d in datas:
                 for i in d['work_domain']:
                     if i['domain_id'] == self.domain_key:
                         for j in i['task']:
-                            print(j)
                             if self.task_id == j['task_id']:
                                 if isinstance(j['status'], str):
+                                    traceback.print_exc()
                                     return f"statusに文字列が格納されています。-> {j['status']}"
-                                if j['status'] >= 1 or j['status'] <= -2:
+                                if j['status'] > 1 or j['status'] <= -2:
+                                    traceback.print_exc()
                                     return f"statusに不正な値が格納されています。-> {j['status']}"
                                 if j['status'] <= 0:
                                     j['status'] = self.status
@@ -139,21 +142,21 @@ class Goals():
             return datas[0]
         
         except Exception as e:
-            import traceback
             traceback.print_exc()
             return f"データの更新時にエラー発生-> {e}"
 
-   # def test_changed_flag(self):
-        flag_data = []
-        for i in data['work_domain']:
-            flag_data = [j['status'] == 1 for j in i['task']]
-        result = all(flag_data)
-        if result:
-            data["work_domain"][0]['completion_flag'] = True
-        else:
-            data["work_domain"][0]['completion_flag'] = False
-        print(data['work_domain'][0]['task'][0])
-        print(data['work_domain'][0]['task'][1])
-        print(data["work_domain"][0]['completion_flag'])
+def update_ticket(data):
+    time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
+    flag_data = []
+    for d in data:
+        for i in d['work_domain']:
+            for j in i['task']:
+                flag_data.append(j['status'])
+                result = all(flag_data)
+                if result:
+                    i['completion_flag'] = True
+                    i['status'] = 1
+                else:
+                    continue
 
 
