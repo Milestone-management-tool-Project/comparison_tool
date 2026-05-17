@@ -33,8 +33,8 @@ def goals_set(ticket, limit, overview, datail):
     return result
 
 @app.post("/goals/create_child_ticket")
-def create_child_ticket(project_key, status, limit, overview, purpose, work_domain):
-    result = goals.Goals(key=project_key, status=status, limit=limit,overview=overview , purpose=purpose, work_domain=work_domain).create_child_ticket()
+def create_child_ticket(project_key, limit, overview, purpose, work_domain):
+    result = goals.Goals(key=project_key, limit=limit,overview=overview , purpose=purpose, work_domain=work_domain).create_child_ticket()
     return result
 
 @app.post("/goals/create_grandchild_ticket")
