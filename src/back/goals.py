@@ -115,6 +115,7 @@ class Goals():
         try:
             with open(self.json_file, 'r', encoding='utf-8') as f:
                 datas = [json.loads(line) for line in f.readlines()]
+            update_parent_ticket(datas)
             update_child_ticket(datas)
             for d in datas:
                 for i in d['work_domain']:
@@ -163,6 +164,26 @@ def update_child_ticket(data):
                     i['completion_flag'] = True
                     i['status'] = 1
                 else:
-                    continue
+                    i['completion_flag'] = False
+                    i['status'] = 0
 
-
+def update_parent_ticket(data):
+    # time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
+    flag_data = []
+    for d in data:
+        for i in d['work_domain']:
+            if isinstance(i['status'], str):
+                traceback.print_exc()
+                return f"statusに文字列が格納されています。-> {i['status']}"
+            if i['status'] > 1 or i['status'] <= -2:
+                traceback.print_exc()
+                return f"statusに不正な値が格納されています。-> {i['status']}"
+            if i['status'] == 1:
+                flag_data.append(i['status'])
+                result = all(flag_data)
+                if result:
+                    d['completion_flag'] = True
+                    d['status'] = 1
+                else:
+                    i['completion_flag'] = False
+                    i['status'] = 0
