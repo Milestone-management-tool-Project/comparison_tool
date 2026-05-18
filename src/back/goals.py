@@ -115,7 +115,7 @@ class Goals():
         try:
             with open(self.json_file, 'r', encoding='utf-8') as f:
                 datas = [json.loads(line) for line in f.readlines()]
-            update_ticket(datas)
+            update_child_ticket(datas)
             for d in datas:
                 for i in d['work_domain']:
                     if i['domain_id'] == self.domain_key:
@@ -145,12 +145,18 @@ class Goals():
             traceback.print_exc()
             return f"データの更新時にエラー発生-> {e}"
 
-def update_ticket(data):
-    time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
+def update_child_ticket(data):
+    # time = datetime.now().strftime("%y-%m-%d %H:%M:%S")
     flag_data = []
     for d in data:
         for i in d['work_domain']:
             for j in i['task']:
+                if isinstance(j['status'], str):
+                    traceback.print_exc()
+                    return f"statusに文字列が格納されています。-> {j['status']}"
+                if j['status'] > 1 or j['status'] <= -2:
+                    traceback.print_exc()
+                    return f"statusに不正な値が格納されています。-> {j['status']}"
                 flag_data.append(j['status'])
                 result = all(flag_data)
                 if result:

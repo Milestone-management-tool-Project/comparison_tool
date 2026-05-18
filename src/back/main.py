@@ -43,7 +43,7 @@ def create_grandchild_ticket(project_key, status:int, limit, domain_key, task_na
     return result
 
 @app.post("/goals/update_grandchild_ticket")
-def create_grandchild_ticket(project_key, status:int, limit, domain_key, task_id):
+def update_grandchild_ticket(project_key, status:int, limit, domain_key, task_id):
     result = goals.Goals(key=project_key, domain_key=domain_key ,status=status, limit=limit, task_id=task_id).update_status()
     return result
 
